@@ -1,11 +1,16 @@
 package rmi;
 
+import com.mysql.jdbc.Connection;
 import static java.lang.Class.forName;
+import java.sql.DriverManager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 public class DatabaseConnection {
+    
+    private Connection con;
+    private static DatabaseConnection db;
     
     private DatabaseConnection(){
     
@@ -13,10 +18,10 @@ public class DatabaseConnection {
         
        Class.forName("com.mysql.jdbc.Driver");
        System.out.println("Driver loaded");
-       
-       
+       con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/firealarmdb","root","");
+       System.out.println("Connection Established");
      }
-    catch (Exception ex) {
+     catch (Exception ex) {
         
              System.out.println(ex);
             
@@ -24,9 +29,17 @@ public class DatabaseConnection {
     
   }
     
-    public static void main(String[] args){
+    public static DatabaseConnection getDatabaseConnection(){
         
-        new DatabaseConnection();
+        if(db == null){
+           db =  new DatabaseConnection();
+        }
+        return db;
     }
     
+    public Connection getConnection(){
+        return con;
+    }
+    
+   
 }
