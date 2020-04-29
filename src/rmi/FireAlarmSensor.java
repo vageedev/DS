@@ -5,39 +5,44 @@
  */
 package rmi;
 
+import static java.lang.reflect.Array.set;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 //import org.nit.instance.DtabaseConnection;
-        
+
 public class FireAlarmSensor extends javax.swing.JFrame {
 
     private Connection con;
+    private int alarmId;
 
     public FireAlarmSensor() {
         initComponents();
-        
+
         try {
-        
+
             Class.forName("com.mysql.jdbc.Driver");
             System.out.println("Driver loaded");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FireAlarm","root","");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FireAlarm", "root", "");
             System.out.println("Connection Established");
-        }
-          catch (Exception ex) {
+        } catch (Exception ex) {
 
-                  System.out.println(ex);
+            System.out.println(ex);
 
         }
 //        
         DatabaseConnection db = DatabaseConnection.getDatabaseConnection();
         con = db.getConnection();
-        
+
+        setalarmTable();
+
     }
 
     /**
@@ -83,6 +88,11 @@ public class FireAlarmSensor extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        alarmTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                alarmTableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(alarmTable);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -127,6 +137,11 @@ public class FireAlarmSensor extends javax.swing.JFrame {
 
         edit.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         edit.setText("Edit");
+        edit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editActionPerformed(evt);
+            }
+        });
 
         delete.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         delete.setText("Delete");
@@ -236,7 +251,26 @@ public class FireAlarmSensor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteActionPerformed
-        // TODO add your handling code here:
+        
+        if(alarmId!=0){
+            
+            try{
+                
+                Statement s = con.createStatement();
+                s.execute("delete from sensors where id="+alarmId);
+                JOptionPane.showMessageDialog(this, "Record Delete");
+                setalarmTable();
+                resetData();
+                alarmId=0;
+            
+            }
+            catch(Exception ex){
+                
+                JOptionPane.showMessageDialog(this, "Cannot Delete Records");
+            }
+        }
+        
+        
     }//GEN-LAST:event_deleteActionPerformed
 
     private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
@@ -248,24 +282,80 @@ public class FireAlarmSensor extends javax.swing.JFrame {
         String sensorStatus = status.getText();
 
         try {
-            
+
             Statement s = con.createStatement();
             s.execute("INSERT INTO sensors(floorNo,roomNo,smokeLevel,status) values(" + floorNos + ",'" + roomNos + "'," + smokeLevels + ",'" + sensorStatus + "')");
-            
+
             JOptionPane.showMessageDialog(this, "Records Submitted");
-            
-//            sensor_id.setText("");
-            floor_no.setText("");
-            room_no.setText("");
-            smoke_level.setText("");
-            status.setText("");
+
+            s.close();
+            resetData();
+
         } catch (Exception ex) {
+
+            JOptionPane.showMessageDialog(this, ex);
+            //ex.printStackTrace();
             
-            ex.printStackTrace();
-            //JOptionPane.showMessageDialog(this, ex);
         }
 
     }//GEN-LAST:event_addActionPerformed
+
+    private void editActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editActionPerformed
+
+        if (alarmId != 0) {
+
+            int floorNos = Integer.parseInt(floor_no.getText());
+            String roomNos = room_no.getText();
+            int smokeLevels = Integer.parseInt(smoke_level.getText());
+            String sensorStatus = status.getText();
+            
+            try{
+                
+                Statement s = con.createStatement();
+                s.execute("update sensors set floorNo="+floorNos+",roomNo='"+roomNos+"',smokeLevel = "+smokeLevels+",status='"+smokeLevels+"' where id="+alarmId);
+                JOptionPane.showMessageDialog(this, "Record updated");
+                setalarmTable();
+                resetData();
+                alarmId=0;
+                
+            }
+            catch(Exception ex){
+                
+                JOptionPane.showMessageDialog(this, "Cannot update recors");
+                
+            }
+
+        }
+
+
+    }//GEN-LAST:event_editActionPerformed
+
+    private void alarmTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_alarmTableMouseClicked
+
+        try {
+
+            alarmId = Integer.parseInt(alarmTable.getValueAt(alarmTable.getSelectedRow(), 0).toString());
+            Statement s = con.createStatement();
+            ResultSet rs = s.executeQuery("select * from sensors where id=" + alarmId);
+
+            if (rs.next()) {
+
+                sensor_id.setText(rs.getInt(1) + "");
+                floor_no.setText(rs.getInt(2) + "");
+                room_no.setText(rs.getString(3));
+                smoke_level.setText(rs.getString(4) + "");
+                status.setText(rs.getString(5));
+
+            }
+
+            rs.close();
+            s.close();
+
+        } catch (Exception ex) {
+
+            JOptionPane.showMessageDialog(this, ex);
+        }
+    }//GEN-LAST:event_alarmTableMouseClicked
 
     /**
      * @param args the command line arguments
@@ -322,4 +412,61 @@ public class FireAlarmSensor extends javax.swing.JFrame {
     private javax.swing.JTextField smoke_level;
     private javax.swing.JTextField status;
     // End of variables declaration//GEN-END:variables
+
+    private void resetData() {
+
+        //sensor_id.setText("");
+        floor_no.setText("");
+        room_no.setText("");
+        smoke_level.setText("");
+        status.setText("");
+    }
+
+    private void setalarmTable() {
+
+        try {
+
+            int rows = 0;
+            int rowIndex = 0;
+
+            Statement s = con.createStatement();
+            ResultSet rs = s.executeQuery("select * from sensors order by id desc");
+
+            if (rs.next()) {
+
+                rs.last();
+                rows = rs.getRow();
+                rs.beforeFirst();
+            }
+
+//            System.out.println(rows);
+            String[][] data = new String[rows][5];
+
+            while (rs.next()) {
+
+                data[rowIndex][0] = rs.getInt(1) + "";
+                data[rowIndex][1] = rs.getInt(2) + "";
+                data[rowIndex][2] = rs.getString(3);
+                data[rowIndex][3] = rs.getInt(4) + "";
+                data[rowIndex][4] = rs.getString(5);
+
+                rowIndex++;
+
+            }
+
+            String[] cols = {"ID", "Floor No", "Room No", "Smoke Level", "Status"};
+            DefaultTableModel model = new DefaultTableModel(data, cols);
+            alarmTable.setModel(model);
+
+            rs.close();
+            s.close();
+
+        } catch (Exception ex) {
+
+            JOptionPane.showMessageDialog(this, "Cannot Retreive data");
+
+        }
+
+    }
+
 }
