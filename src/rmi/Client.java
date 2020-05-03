@@ -15,6 +15,8 @@ import javax.swing.JOptionPane;
  */
 public class Client extends javax.swing.JFrame {
 
+    //RMI Client
+    
     /**
      * Creates new form Login
      */
@@ -125,6 +127,9 @@ public class Client extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
         boolean f = false;
+        
+        
+        //login of the admin
         
         try{
             

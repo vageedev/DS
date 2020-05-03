@@ -5,6 +5,8 @@
  */
 package rmi;
 
+import java.awt.Color;
+import java.awt.Component;
 import static java.lang.reflect.Array.set;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,7 +17,10 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 //import org.nit.instance.DtabaseConnection;
 
 public class FireAlarmSensor extends javax.swing.JFrame {
@@ -27,11 +32,13 @@ public class FireAlarmSensor extends javax.swing.JFrame {
         initComponents();
 
         try {
+            
+            //Connecting the MySQL Database
 
             Class.forName("com.mysql.jdbc.Driver");
             System.out.println("Driver loaded");
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FireAlarm", "root", "");
-            System.out.println("Connection Established");
+            System.out.println("Connection Established!");
         } catch (Exception ex) {
 
             System.out.println(ex);
@@ -67,7 +74,6 @@ public class FireAlarmSensor extends javax.swing.JFrame {
         edit = new javax.swing.JButton();
         delete = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
-        search = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         smoke_level = new javax.swing.JTextField();
@@ -154,9 +160,6 @@ public class FireAlarmSensor extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel4.setText("Fire Alarm Sensor Details");
 
-        search.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        search.setText("Search");
-
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel5.setText("Smoke Level");
 
@@ -174,37 +177,39 @@ public class FireAlarmSensor extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(300, 300, 300)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel5)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(jLabel6)))
-                        .addGap(76, 76, 76)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(room_no, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
-                            .addComponent(floor_no, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
-                            .addComponent(sensor_id, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
-                            .addComponent(smoke_level)
-                            .addComponent(status)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(268, 268, 268)
-                        .addComponent(add)
-                        .addGap(64, 64, 64)
-                        .addComponent(edit)
-                        .addGap(55, 55, 55)
-                        .addComponent(delete)
-                        .addGap(37, 37, 37)
-                        .addComponent(search))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(323, 323, 323)
                         .addComponent(jLabel4))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(52, 52, 52)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(300, 300, 300)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel5)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(10, 10, 10)
+                                        .addComponent(jLabel6)))
+                                .addGap(76, 76, 76))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(add)
+                                .addGap(67, 67, 67)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(edit)
+                                .addGap(69, 69, 69)
+                                .addComponent(delete))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(room_no, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+                                .addComponent(floor_no, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+                                .addComponent(sensor_id, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+                                .addComponent(smoke_level)
+                                .addComponent(status)))))
                 .addContainerGap(143, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -239,8 +244,7 @@ public class FireAlarmSensor extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(add)
                     .addComponent(edit)
-                    .addComponent(delete)
-                    .addComponent(search))
+                    .addComponent(delete))
                 .addGap(18, 18, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -256,6 +260,8 @@ public class FireAlarmSensor extends javax.swing.JFrame {
             
             try{
                 
+                //Delete the firealarm sensor from the database
+                
                 Statement s = con.createStatement();
                 s.execute("delete from sensors where id="+alarmId);
                 JOptionPane.showMessageDialog(this, "Record Delete");
@@ -266,7 +272,7 @@ public class FireAlarmSensor extends javax.swing.JFrame {
             }
             catch(Exception ex){
                 
-                JOptionPane.showMessageDialog(this, "Cannot Delete Records");
+                JOptionPane.showMessageDialog(this, "Cannot Delete Records!");
             }
         }
         
@@ -275,18 +281,19 @@ public class FireAlarmSensor extends javax.swing.JFrame {
 
     private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
 
-//        int id = Integer.parseInt(sensor_id.getText());
         int floorNos = Integer.parseInt(floor_no.getText());
         String roomNos = room_no.getText();
         int smokeLevels = Integer.parseInt(smoke_level.getText());
         String sensorStatus = status.getText();
 
         try {
+            
+            //Adding new fire alarm sensors to the database
 
             Statement s = con.createStatement();
             s.execute("INSERT INTO sensors(floorNo,roomNo,smokeLevel,status) values(" + floorNos + ",'" + roomNos + "'," + smokeLevels + ",'" + sensorStatus + "')");
 
-            JOptionPane.showMessageDialog(this, "Records Submitted");
+            JOptionPane.showMessageDialog(this, "Records Are Submitted!");
 
             s.close();
             resetData();
@@ -311,9 +318,11 @@ public class FireAlarmSensor extends javax.swing.JFrame {
             
             try{
                 
+                //Edit the fire alarm sensor details in the database
+                
                 Statement s = con.createStatement();
-                s.execute("update sensors set floorNo="+floorNos+",roomNo='"+roomNos+"',smokeLevel = "+smokeLevels+",status='"+smokeLevels+"' where id="+alarmId);
-                JOptionPane.showMessageDialog(this, "Record updated");
+                s.execute("update sensors set floorNo="+floorNos+",roomNo='"+roomNos+"',smokeLevel = "+smokeLevels+",status='"+sensorStatus+"' where id="+alarmId);
+                JOptionPane.showMessageDialog(this, "Records Are updated!");
                 setalarmTable();
                 resetData();
                 alarmId=0;
@@ -321,7 +330,7 @@ public class FireAlarmSensor extends javax.swing.JFrame {
             }
             catch(Exception ex){
                 
-                JOptionPane.showMessageDialog(this, "Cannot update recors");
+                JOptionPane.showMessageDialog(this, "Cannot Update Records!");
                 
             }
 
@@ -334,6 +343,8 @@ public class FireAlarmSensor extends javax.swing.JFrame {
 
         try {
 
+            //When selected a row from the datablse, the details of the fire alarm sensor selected by ID shoul display on the text boxes
+            
             alarmId = Integer.parseInt(alarmTable.getValueAt(alarmTable.getSelectedRow(), 0).toString());
             Statement s = con.createStatement();
             ResultSet rs = s.executeQuery("select * from sensors where id=" + alarmId);
@@ -345,8 +356,29 @@ public class FireAlarmSensor extends javax.swing.JFrame {
                 room_no.setText(rs.getString(3));
                 smoke_level.setText(rs.getString(4) + "");
                 status.setText(rs.getString(5));
+                
+                
+                int smokeLevels = Integer.parseInt(smoke_level.getText());
+                
+                if(smokeLevels>=5){
+           
+                    //When the smoke level is greater than or equal to 5, then that textfield should appear in red colour
+                    
+                    status.setBackground(Color.red);
+                
+                }
+                
+                else{
+                    
+                    //When the smoke level is less than 5, then that textfield should appear in green colour
+                    
+                    status.setBackground(Color.GREEN);
+                    
+                }
 
             }
+            
+            
 
             rs.close();
             s.close();
@@ -407,7 +439,6 @@ public class FireAlarmSensor extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField room_no;
-    private javax.swing.JButton search;
     private javax.swing.JTextField sensor_id;
     private javax.swing.JTextField smoke_level;
     private javax.swing.JTextField status;
@@ -463,10 +494,12 @@ public class FireAlarmSensor extends javax.swing.JFrame {
 
         } catch (Exception ex) {
 
-            JOptionPane.showMessageDialog(this, "Cannot Retreive data");
+            JOptionPane.showMessageDialog(this, "Cannot Retrieve Data!");
 
         }
 
     }
+    
+    
 
 }

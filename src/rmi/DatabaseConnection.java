@@ -16,6 +16,8 @@ public class DatabaseConnection {
     
     try {
         
+        //Connecting the MySQL Database
+        
        Class.forName("com.mysql.jdbc.Driver");
        System.out.println("Driver loaded");
        con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/firealarmdb","root","");
