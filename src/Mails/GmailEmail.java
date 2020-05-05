@@ -38,10 +38,7 @@ public class GmailEmail {
             message.setFrom(new InternetAddress("****@gmail.com"));
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse("****@gmail.com"));
-            message.setSubject("My fisrt email");
-            message.setContent("<h:body style=background-color:white;font-family:verdana;color:#0066CC;>"
-                    + "If you are getting this you wrote your first email!<br/><br/>"
-                    +"</body>", "text/html; charset=utf-8");
+            message.setSubject("FireSensor Alarm is active!!!");
             
             Transport.send(message);
             

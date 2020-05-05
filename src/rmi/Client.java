@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
 //RMI Client
 
 public class Client extends javax.swing.JFrame {
-
+    
     public Client() {
         initComponents();
     }
