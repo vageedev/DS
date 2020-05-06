@@ -452,7 +452,7 @@ public class FireAlarmSensor extends javax.swing.JFrame {
 
     private void resetData() {
 
-//        sensor_id.setText("");
+        sensor_id.setText("");
 //        floor_no.setText("");
 //        room_no.setText("");
         smoke_level.setText("");
