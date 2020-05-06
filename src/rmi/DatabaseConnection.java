@@ -1,10 +1,7 @@
 package rmi;
 
 import com.mysql.jdbc.Connection;
-import static java.lang.Class.forName;
 import java.sql.DriverManager;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class DatabaseConnection {

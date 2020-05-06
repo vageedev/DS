@@ -2,42 +2,29 @@ package rmi;
 
 import java.awt.Color;
 import java.awt.Component;
-import static java.lang.reflect.Array.set;
+import java.awt.Font;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-//import org.nit.instance.DtabaseConnection;
+
 
 public class FireAlarmSensor extends javax.swing.JFrame {
 
     private Connection con;
     private int alarmId;
     
+    
     public FireAlarmSensor() {
         initComponents();
 
         try {
             
-            //Connecting to the MySQL Database
+            //Connection to the MySQL Database
 
             Class.forName("com.mysql.jdbc.Driver");
             System.out.println("Driver loaded");
@@ -52,11 +39,32 @@ public class FireAlarmSensor extends javax.swing.JFrame {
         
         DatabaseConnection db = DatabaseConnection.getDatabaseConnection();
         con = db.getConnection();
-
+        
+        //Auto refresh the table in every 15 seconds
+        
         setalarmTable();
+        
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for(;;){    
+                    try {
+                        int time = 15000;
+                        Thread.sleep(time);
+                        System.out.println("Refreshed in 15 seconds!");
+                        setalarmTable();
+                        
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+                  
+        });
+        
+        t.start();
 
     }
-
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -77,8 +85,8 @@ public class FireAlarmSensor extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         smoke_level = new javax.swing.JTextField();
         status = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        Floor_no = new javax.swing.JComboBox<>();
+        Room_no = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -168,9 +176,9 @@ public class FireAlarmSensor extends javax.swing.JFrame {
 
         status.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20" }));
+        Floor_no.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20" }));
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10" }));
+        Room_no.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -207,11 +215,11 @@ public class FireAlarmSensor extends javax.swing.JFrame {
                                 .addGap(69, 69, 69)
                                 .addComponent(delete))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(Room_no, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(sensor_id, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
                                 .addComponent(smoke_level, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(status, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                                .addComponent(Floor_no, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                 .addContainerGap(143, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -230,10 +238,10 @@ public class FireAlarmSensor extends javax.swing.JFrame {
                         .addGap(32, 32, 32)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
-                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(Room_no, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(36, 36, 36)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(Floor_no, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
@@ -266,7 +274,8 @@ public class FireAlarmSensor extends javax.swing.JFrame {
                 
                 Statement s = con.createStatement();
                 s.execute("delete from sensors where id="+alarmId);
-                JOptionPane.showMessageDialog(this, "Record Deleted!");
+                JOptionPane.showMessageDialog(this, "Record Are Deleted!");
+                
                 setalarmTable();
                 resetData();
                 alarmId=0;
@@ -274,17 +283,16 @@ public class FireAlarmSensor extends javax.swing.JFrame {
             }
             catch(Exception ex){
                 
-                JOptionPane.showMessageDialog(this, "Cannot Delete Records!");
+                JOptionPane.showMessageDialog(this, "Can't Delete Records!");
             }
         }
-        
         
     }//GEN-LAST:event_deleteActionPerformed
 
     private void addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addActionPerformed
 
-        int floorNos = Integer.parseInt(jComboBox1.getSelectedItem().toString());
-        String roomNos = jComboBox2.getSelectedItem().toString();
+        int floorNos = Integer.parseInt(Floor_no.getSelectedItem().toString());
+        String roomNos = Room_no.getSelectedItem().toString();
         int smokeLevels = Integer.parseInt(smoke_level.getText());
         String sensorStatus = status.getText();
 
@@ -315,8 +323,8 @@ public class FireAlarmSensor extends javax.swing.JFrame {
 
         if (alarmId != 0) {
 
-            int floorNos = Integer.parseInt(jComboBox1.getSelectedItem().toString());
-            String roomNos = jComboBox2.getSelectedItem().toString();
+            int floorNos = Integer.parseInt(Floor_no.getSelectedItem().toString());
+            String roomNos = Room_no.getSelectedItem().toString();
             int smokeLevels = Integer.parseInt(smoke_level.getText());
             String sensorStatus = status.getText();
             
@@ -326,7 +334,8 @@ public class FireAlarmSensor extends javax.swing.JFrame {
                 
                 Statement s = con.createStatement();
                 s.execute("update sensors set floorNo="+floorNos+",roomNo='"+roomNos+"',smokeLevel = "+smokeLevels+",status='"+sensorStatus+"' where id="+alarmId);
-                JOptionPane.showMessageDialog(this, "Records Are updated!");
+                JOptionPane.showMessageDialog(this, "Records Are Updated!");
+                
                 setalarmTable();
                 resetData();
                 alarmId=0;
@@ -334,7 +343,7 @@ public class FireAlarmSensor extends javax.swing.JFrame {
             }
             catch(Exception ex){
                 
-                JOptionPane.showMessageDialog(this, "Cannot Update Records!");
+                JOptionPane.showMessageDialog(this, "Can't Update Records!");
                 
             }
 
@@ -346,7 +355,7 @@ public class FireAlarmSensor extends javax.swing.JFrame {
 
         try {
 
-            //When selected a row from the table, the details of the fire alarm sensor should display on the text boxes
+            //When selected a row from the table, the details of the fire alarm sensor should display on the text boxes and combo boxes
             
             alarmId = Integer.parseInt(alarmTable.getValueAt(alarmTable.getSelectedRow(), 0).toString());
             Statement s = con.createStatement();
@@ -355,8 +364,8 @@ public class FireAlarmSensor extends javax.swing.JFrame {
             if (rs.next()) {
 
                 sensor_id.setText(rs.getInt(1) + "");
-                jComboBox1.setSelectedItem(rs.getString(2));
-                jComboBox2.setSelectedItem(rs.getString(3));
+                Floor_no.setSelectedItem(rs.getString(2));
+                Room_no.setSelectedItem(rs.getString(3));
                 smoke_level.setText(rs.getString(4) + "");
                 status.setText(rs.getString(5));
                 
@@ -365,23 +374,22 @@ public class FireAlarmSensor extends javax.swing.JFrame {
                 
                 if(smokeLevels>=5){
            
-                    //When the smoke level is greater than or equal to 5, then that textfield should appear in red colour
+                    //When the smoke level is greater than or equal to 5, then the status textfield should appear in red colour
                     
                     status.setBackground(Color.red);
-                                        
-                
+                                                      
                 }
                 
                 else{
                     
-                    //When the smoke level is less than 5, then that textfield should appear in green colour
+                    //When the smoke level is less than 5, then the status textfield should appear in green colour
                     
                     status.setBackground(Color.GREEN);
                     
                 }
 
             }
-            
+                     
             rs.close();
             s.close();
 
@@ -427,12 +435,12 @@ public class FireAlarmSensor extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> Floor_no;
+    private javax.swing.JComboBox<String> Room_no;
     private javax.swing.JButton add;
     private javax.swing.JTable alarmTable;
     private javax.swing.JButton delete;
     private javax.swing.JButton edit;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -453,6 +461,7 @@ public class FireAlarmSensor extends javax.swing.JFrame {
 //        room_no.setText("");
         smoke_level.setText("");
         status.setText("");
+        
     }
 
     private void setalarmTable() {
@@ -472,7 +481,6 @@ public class FireAlarmSensor extends javax.swing.JFrame {
                 rs.beforeFirst();
             }
 
-//            System.out.println(rows);
             String[][] data = new String[rows][5];
 
             while (rs.next()) {
@@ -491,18 +499,17 @@ public class FireAlarmSensor extends javax.swing.JFrame {
             DefaultTableModel model = new DefaultTableModel(data, cols);
             alarmTable.setModel(model);
 
+            
             rs.close();
             s.close();
 
         } catch (Exception ex) {
 
-            JOptionPane.showMessageDialog(this, "Cannot Retrieve Data!");
+            JOptionPane.showMessageDialog(this, "Can't Retrieve Data!");
 
         }
 
     }
-    
-     
     
 
 }

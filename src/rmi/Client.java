@@ -109,15 +109,15 @@ public class Client extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
-        boolean f = false;
+        boolean fail = false;
         
         try{
             
             Registry reg = LocateRegistry.getRegistry("127.0.0.1",1099);
             LoginService i = (LoginService)reg.lookup("login");
-            f = i.getLogin(username_txt.getText(), password_txt.getText());
+            fail = i.getLogin(username_txt.getText(), password_txt.getText());
             
-            if(f==true){
+            if(fail==true){
                 
                 //When admin logged to system it should display "Login sucessful!" message
                 
